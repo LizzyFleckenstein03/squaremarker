@@ -1,6 +1,6 @@
 plugins {
     id("squaremarker.platform")
-    id("quiet-fabric-loom")
+    id("xyz.jpenilla.quiet-fabric-loom")
     id("com.gradleup.shadow")
 }
 
@@ -13,12 +13,11 @@ configurations.implementation {
 
 dependencies {
     minecraft("com.mojang:minecraft:$minecraftVersion")
-    mappings(loom.officialMojangMappings())
     projectImpl(project(":squaremarker-common"))
 }
 
 val markerExt = extensions.getByType<SquareMarkerPlatformExtension>()
-markerExt.productionJar = tasks.remapJar.flatMap { it.archiveFile }
+markerExt.productionJar = tasks.shadowJar.flatMap { it.archiveFile }
 
 tasks {
     shadowJar {
@@ -28,9 +27,6 @@ tasks {
                 it.moduleGroup == "org.incendo"
             }
         }
-    }
-    remapJar {
-        inputFile.set(shadowJar.flatMap { it.archiveFile })
         archiveFileName.set("${project.name}-mc$minecraftVersion-${project.version}.jar")
     }
 }
